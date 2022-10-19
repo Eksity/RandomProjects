@@ -22,7 +22,7 @@ current_value = cost * -1
 current_level = 1
 count = 0
 
-while current_value < cost and count < 1000:
+while current_value < cost and count < 1000000:
     if current_level < max_level:
         current_value = (current_value - run_cost + (reward * current_level))
         current_level += 1
