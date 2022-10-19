@@ -4,6 +4,7 @@
 #so run 1 gives 10, run 2 gives 20, and both run 10 and run 15 give 100.
 #given a cost, run cost, reward, and cap how many runs will it take to make the original cost back?
 import sys
+from math import sqrt
 try:
     cost = int(input("Cost: "))
     max_level = int(input("Max level: "))
@@ -11,6 +12,12 @@ try:
     run_cost = int(input("Cost per run: "))
 except ValueError:
     sys.exit("Incorrect input")
+checklist = [cost, max_level, reward, run_cost]
+for check in checklist:
+    try: 
+        sqrt(check)
+    except ValueError:
+        sys.exit("No negative inputs")
 current_value = cost * -1
 current_level = 1
 count = 0
