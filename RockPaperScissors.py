@@ -1,4 +1,4 @@
-# TODO:
+#todo:
 #Use \r (carriage return, see Countdown.py) and time.sleep() and some kind of terminal clear to keep all the games on the same row
 
 # imports
@@ -101,4 +101,3 @@ while 1==1:
         exit()
     elif playagain != "n" and playagain != "y":
         playagain = input("play again? (y/n) ")
-
