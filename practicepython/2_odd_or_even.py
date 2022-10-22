@@ -13,4 +13,9 @@ def is_even(number):
     else:
         print("Odd!")
 
-is_even(int(input()))
+# extra #2:
+def is_divisible(num, check):
+    if num % check == 0:
+        print("Divisible!")
+    else:
+        print("Not divisible!")
