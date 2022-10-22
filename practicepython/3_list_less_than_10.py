@@ -14,3 +14,7 @@ def less_than_5(list):
 def less_than_given(list, check):
     return [num for num in list if num < check]
 
+def main():
+    print(a)
+    print(less_than_5(a))
+    print(less_than_given(a, input("Less than: ")))

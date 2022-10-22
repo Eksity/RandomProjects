@@ -7,4 +7,8 @@
 def turn100(name, age, multiplier):
     print(multiplier * f"{name}, you will turn 100 in {2022 - age + 100}\n", end = "")
 
-turn100(input("Name: "), int(input("Age: ")), int(input("Multiplier: ")))
+def main():
+    turn100(input("Name: "), int(input("Age: ")), int(input("Multiplier: ")))
+
+if __name__ == "__main__":
+    main()

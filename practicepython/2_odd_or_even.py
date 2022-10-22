@@ -19,3 +19,10 @@ def is_divisible(num, check):
         print("Divisible!")
     else:
         print("Not divisible!")
+
+def main():
+    is_even(int(input("Check if even: ")))
+    is_divisible(int(input("Check if: ")), int(input("is divisible by: ")))
+
+if __name__ == "__main__":
+    main()
