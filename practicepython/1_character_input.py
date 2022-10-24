@@ -10,5 +10,3 @@ def turn100(name, age, multiplier):
 def main():
     turn100(input("Name: "), int(input("Age: ")), int(input("Multiplier: ")))
 
-if __name__ == "__main__":
-    main()

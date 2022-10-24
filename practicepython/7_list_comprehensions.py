@@ -9,5 +9,3 @@ def even_numbers(list):
 def main():
     print(even_numbers(a))
 
-if __name__ == "__main__":
-    main()
