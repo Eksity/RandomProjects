@@ -18,3 +18,6 @@ def main():
     print(a)
     print(less_than_5(a))
     print(less_than_given(a, input("Less than: ")))
+
+if __name__ == "__main__":
+    main()
