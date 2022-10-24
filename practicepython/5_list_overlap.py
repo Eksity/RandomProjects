@@ -31,5 +31,3 @@ def main():
     print(f"{x}\n{y}")
     print(compare_lists(x, y))
 
-if __name__ == "__main__":
-    main()

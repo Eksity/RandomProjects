@@ -10,5 +10,3 @@ def all_divisors(num):
 def main():
     print(all_divisors(int(input("Number: "))))
 
-if __name__ == "__main__":
-    main()
