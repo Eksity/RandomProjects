@@ -12,6 +12,5 @@ def palindrome(str):
 def main():
     palindrome(input("Input: "))
 
-
-
-    
+if __name__ == "__main__":
+    main()
