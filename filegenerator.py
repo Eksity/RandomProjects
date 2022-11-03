@@ -1,5 +1,4 @@
 #short script to create a bunch of files with random text in them to practice zsh commands
-from calendar import c
 import random
 import string
 
