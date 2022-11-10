@@ -1,3 +1,5 @@
+import pandas as pd
+import openpyxl
 import random
 class test:
     def __init__(self, card, suit):
@@ -30,7 +32,14 @@ class test:
         if card not in cards:
             raise ValueError("card not valid")
         self._card = card
-cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
-suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs']
-randomcard = test(random.choice(cards), random.choice(suits))
-print(randomcard.suit)
+
+def main():
+    cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
+    suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs']
+    randomcard = test(random.choice(cards), random.choice(suits))
+    print(randomcard.suit)
+    #df = pd.DataFrame([[11, 21, 31], [12, 22, 32], [31, 32, 33]],
+        #index=['one', 'two', 'three'], columns=['a', 'b', 'c'])
+
+if __name__=="__main__":
+    main()
