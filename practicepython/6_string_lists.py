@@ -10,7 +10,7 @@ def palindrome(str):
         return False
 
 def main():
-    palindrome(input("Input: "))
+    print(palindrome(input("Input: ")))
 
 if __name__ == "__main__":
     main()
