@@ -9,13 +9,44 @@ class Deck:
         return f"{self.cardlist}"
 
     def toexcel(self):
-        valueslist = []
-        suitslist = []
+        hearts = []
+        spades = []
+        clubs = []
+        diamonds = []
         for i in self.cardlist:
             x = i.split(" ")
-            valueslist.append(x[0])
-            suitslist.append(x[1])
-        df = pd.DataFrame({'values': valueslist, 'suits':suitslist})
+            match x[1]:
+                case "Spades":
+                    spades.append(x[0])
+                case "Hearts":
+                    hearts.append(x[0])
+                case "Clubs":
+                    clubs.append(x[0])
+                case "Diamonds":
+                    diamonds.append(x[0])
+        spades.insert(0, len(spades))
+        hearts.insert(0, len(hearts))
+        clubs.insert(0, len(clubs))
+        diamonds.insert(0, len(diamonds))
+        for i in range(self.size):
+            while len(hearts) != len(spades):
+                if len(hearts) > len(spades):
+                    spades.append("")
+                elif len(spades) > len(hearts):
+                    hearts.append("")
+            while len(clubs) != len(spades):
+                if len(clubs) > len(spades):
+                    spades.append("")
+                elif len(spades) > len(clubs):
+                    clubs.append("")
+            while len(diamonds) != len(spades):
+                if len(diamonds) > len(spades):
+                    spades.append("")
+                elif len(spades) > len(diamonds):
+                    diamonds.append("")
+
+        data = {'Spades': spades, 'Hearts':hearts, 'Clubs':clubs, 'Diamonds':diamonds}
+        df = pd.DataFrame(data)
         df.to_excel("~/Desktop/foo.xlsx")
             
 
@@ -41,6 +72,5 @@ class Deck:
             raise ValueError("Deck too small")
         self._size = size
 
-x = Deck(25)
+x = Deck(52)
 x.toexcel()
-print(x)
