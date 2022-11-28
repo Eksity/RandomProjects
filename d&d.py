@@ -138,5 +138,24 @@ if __name__ == '__main__':
                     combatants.insert(int(input("turn order (number): "))-1, fighter)
                 except ValueError:
                     message = "Invalid order"
+            case 'move':
+                person = 0
+                for x in combatants:
+                    try:
+                        if command[1] == x.attr()[0]:
+                            try:
+                                combatants.remove(x)
+                                combatants.insert(int(command[2])-1, x)
+                                person = 1
+                            except ValueError:
+                                message = "Invalid command"
+                                person = 1
+                            except IndexError:
+                                message = "Invalid command2"
+                                person = 1
+                    except IndexError:
+                        message = "Invalid command"
+                if person == 0:
+                    message = 'combatant not found or command incomplete'
             case other:
                 message = "Command not found, use \"help\" to see commands"
