@@ -1,11 +1,11 @@
+#imports
 import sys
 import os
 import csv
 #pip install tabulate
 from tabulate import tabulate 
-#features I'd like: 
-#death save tracker (propably not too hard)
 
+#create class for combatants
 class Entity:
     def __init__(self, name, maxhealth, nowhealth, armor):
         self.name = name
@@ -13,10 +13,12 @@ class Entity:
         self.nowhealth = nowhealth
         self.armor = armor
         self.order = 0
+        self.kill = False
 
     def attr(self):
         return [self.name, self.maxhealth, self.nowhealth, self.armor, self.order]
 
+    #method to subtract health
     def damage(self, num):
         try:
             num = int(num)
@@ -24,6 +26,7 @@ class Entity:
             raise ValueError
         self.nowhealth -= num
     
+    #method to add health
     def heal(self, num):
         try:
             num = int(num)
@@ -35,17 +38,31 @@ class Entity:
     def armor(self):
         return self._armor
 
+    #make sure armor >= 0
     @armor.setter
     def armor(self, armor):
         if armor < 0:
-            print('Invalid armor value, please try again')
-            self.remove()
+            print('Armor class must be above zero')
+            self.kill = True
         self._armor = armor
+
+    @property
+    def maxhealth(self):
+        return self._maxhealth
+
+    # make sure max health >= 1
+    @maxhealth.setter
+    def maxhealth(self, maxhealth):
+        if maxhealth <= 0:
+            print("Maximum health must be above zero")
+            self.kill = True
+        self._maxhealth = maxhealth
 
     @property
     def nowhealth(self):
         return self._nowhealth
 
+    #add a message when a combatants' health drops below zero
     @nowhealth.setter
     def nowhealth(self, nowhealth):
         if nowhealth <= 0:
@@ -53,64 +70,104 @@ class Entity:
         self._nowhealth = nowhealth
 
 if __name__ == '__main__':
+    # declare constants
     combatants = []
-    help = "remember everything is case sensitive!\navailable commands: damage | heal | add | remove\ndamage| syntax: damage name amount\nheal  | syntax: heal name amount\nadd   | syntax: add name\nremove| syntax: remove name\nend   | syntax: end"
     message = ''
-    macfolder = os.path.join(os.path.expanduser('~'), "Library", "Application Support", "dndtracker")
-    winfolder = os.path.join(os.path.expanduser('~'), "AppData", "Local", "dndtracker")
-    if sys.platform == 'darwin':
+    macfolder = os.path.join(os.path.expanduser('~'), "Library", "Application Support", "dmhelper")
+    winfolder = os.path.join(os.path.expanduser('~'), "AppData", "Local", "dmhelper")
+    lnxfolder = os.path.join(os.path.expanduser('~'), ".local", "dmhelper")
+
+    #create save folders and set save paths based on OS (ADD LINUX)
+    if sys.platform.startswith('darwin'):
         if os.path.exists(macfolder):
             pass
         else:
             os.mkdir(macfolder)
         path = macfolder
-    if sys.platform == 'win32':
+    elif sys.platform.startswith('win32'):
         if os.path.exists(winfolder):
             pass
         else:
             os.mkdir(winfolder) 
         path = winfolder 
+    elif sys.platform.startswith('linux'):
+        if os.path.exists(lnxfolder):
+            pass
+        else:
+            os.mkdir(lnxfolder) 
+        path = lnxfolder
+
+    #main usage loop
     while True:
+        #set the combatants' order attribute in case anything changes
         for x in combatants:
             x.order = combatants.index(x)
-        if sys.platform == 'darwin':
+
+        #set the files and filenames variables to the current file list in case anything changes
+        if sys.platform.startswith('darwin'):
             files = os.listdir(macfolder)
-        if sys.platform == 'win32':
+        elif sys.platform.startswith('win32'):
             files = os.listdir(winfolder)
-        files = os.listdir(macfolder)
+        elif sys.platform.startswith('linux'):
+            files = os.listdir(lnxfolder)
         filenames = []
+
+        #deal with extraneous files in the dmhelper folder
         for x in files:
             if x[-4:] == ".csv":
                 filenames.append(x[:-4])
+
+        #create output table
         table = [['Name', 'Max HP', 'Current HP', 'AC']]
         for x in combatants:
             table.append(x.attr()[:-1])
-        #os.system('cls' if os.name == 'nt' else 'clear')
+
+        #clear terminal window
+        os.system('cls' if sys.platform == 'win32' else 'clear')
+
+        #print output
         print(tabulate(table, headers="firstrow", tablefmt="heavy_grid"))
-        person = 0
+
+        #print error message
         if message:
             print(message)
         else:
             pass
+
+        #reset the message
         message = ''
+
+        #wait for command from user
         command = input('&: ').split(" ")
+
+        #do the command
         match command[0]:
-            case 'help' | 'h' | '-h':
-                print(help)
+
+            #kill the program
             case 'end' | 'q' | 'quit':
                 while True:
-                    yn = input("Are you sure you want to end? this will delete all combat data. (y/n) ").lower()
+                    yn = input("Are you sure you want to end? this will delete all unsaved combat data. (y/n) ").lower()
                     if yn == 'y':
-                        sys.exit('Combat ended by user')
+                        sys.exit('Encounter ended by user')
                     elif yn == 'n':
                         break
                 continue
+
+            #damage a combatant using self.damage()
             case 'damage':
+                try:
+                    dname = command[1]
+                except IndexError:
+                    dname = input("Damage who? ")
+                try:
+                    dnum = command[2]
+                except IndexError:
+                    dnum = input("How much damage? ")
                 for x in combatants:
                     try:
-                        if command[1] == x.attr()[0]:
+                        if dname == x.attr()[0]:
                             try:
-                                x.damage(command[2])
+                                x.damage(dnum)
                                 person = 1
                             except ValueError:
                                 message = "Invalid command"
@@ -118,13 +175,23 @@ if __name__ == '__main__':
                         message = "Invalid command"
                 if person == 0:
                     message = 'combatant not found or command incomplete'
+
+            #heal a combatant using self.heal()
             case 'heal':
+                try:
+                    hname = command[1]
+                except IndexError:
+                    hname = input("Heal who? ")
+                try:
+                    hnum = command[2]
+                except IndexError:
+                    hnum = input("How much HP? ")
                 person = 0
                 for x in combatants:
                     try:
-                        if command[1] == x.attr()[0]:
+                        if hname == x.attr()[0]:
                             try:
-                                x.heal(command[2])
+                                x.heal(hnum)
                                 person = 1
                             except ValueError:
                                 message = "Invalid command"
@@ -134,18 +201,26 @@ if __name__ == '__main__':
                         message = "Invalid command"
                 if person == 0:
                     message = 'combatant not found or command incomplete'
+
+            #remove a combatant by removing them from the list of combatants, therefore deleting all references to them.
             case 'remove':
                 person = 0
                 place = 0
+                try:
+                    rname = command[1]
+                except IndexError:
+                    rname = input("Who would you like to remove?")
                 for x in combatants:
                     try:
-                        if command[1] == x.attr()[0]:
+                        if rname == x.attr()[0]:
                             del(combatants[place])
                             person = 1
                         else:
                             place += 1
                     except IndexError:
                         message = "Invalid command"
+
+            #add a new Entity object to the combatants list
             case 'add':
                 person = 0
                 for x in combatants:
@@ -162,10 +237,14 @@ if __name__ == '__main__':
                 except ValueError:
                     message = "Invalid command"
                     continue
+                if fighter.kill:
+                    continue
                 try:
                     combatants.insert(int(input("turn order (number): "))-1, fighter)
                 except ValueError:
                     message = "Invalid order"
+
+            #change a combatant's place in the list
             case 'move':
                 person = 0
                 for x in combatants:
@@ -185,12 +264,17 @@ if __name__ == '__main__':
                         message = "Invalid command"
                 if person == 0:
                     message = 'combatant not found or command incomplete'
+
+            #save the current encounter to a csv file
             case 'save':
-                name = f"{input('Save as: ')}.csv"
-                if name in files:
+                try:
+                    senc = command[1]
+                except IndexError:
+                    senc = f"{input('Save as: ')}.csv"
+                if senc in files:
                     no = False
                     while True:
-                        yn = input(f"This will overwrite the existing encounter \"{name[:-4]}\". continue? (y/n): ")
+                        yn = input(f"This will overwrite the existing encounter \"{senc[:-4]}\". continue? (y/n): ")
                         if yn == 'y':
                             break
                         elif yn == 'n':
@@ -200,23 +284,31 @@ if __name__ == '__main__':
                             continue
                     if no:
                         continue
-                with open(f"{os.path.join(path, name)}", "w") as file:
+                with open(f"{os.path.join(path, senc)}", "w") as file:
                     writer = csv.writer(file)
                     for x in combatants:
                         writer.writerow(x.attr())
+
+            #load an existing encounter from a csv file
             case 'load':
-                print("Current encounters: ")
-                print(", ".join(filenames))
-                name = input("Encounter to load: ")
-                if name not in filenames:
+                try:
+                    enc = command[1]
+                except IndexError:
+                    print("Current encounters: ")
+                    print(", ".join(filenames))
+                    enc = input("Encounter to load: ")
+                if enc not in filenames:
                     message = "File not found"
                     continue
                 else:
-                    with open(f"{os.path.join(path, name)}.csv", "r") as file1:
+                    with open(f"{os.path.join(path, enc)}.csv", "r") as file1:
                         reader = csv.reader(file1)
                         combatants = []
                         for row in reader:
-                            fighter = Entity(row[0], int(row[1]), int(row[2]), int(row[3]))
-                            combatants.insert(int(row[4]), fighter)
+                            if row:
+                                combatant = Entity(row[0], int(row[1]), int(row[2]), int(row[3]))
+                                combatants.insert(int(row[4]), combatant)
+            
+            #if none of the above are used, give an error.
             case other:
                 message = "Command not found, use \"help\" to see commands"
