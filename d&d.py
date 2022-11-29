@@ -1,4 +1,6 @@
 import sys
+import os
+import csv
 #pip install tabulate
 from tabulate import tabulate 
 #features I'd like: 
@@ -10,9 +12,10 @@ class Entity:
         self.maxhealth = maxhealth
         self.nowhealth = nowhealth
         self.armor = armor
+        self.order = 0
 
     def attr(self):
-        return [self.name, self.maxhealth, self.nowhealth, self.armor]
+        return [self.name, self.maxhealth, self.nowhealth, self.armor, self.order]
 
     def damage(self, num):
         try:
@@ -51,15 +54,39 @@ class Entity:
 
 if __name__ == '__main__':
     combatants = []
-    help = "remember everything is case sensetive!\navailable commands: damage | heal | add | remove\ndamage| syntax: damage name amount\nheal  | syntax: heal name amount\nadd   | syntax: add name\nremove| syntax: remove name\nend   | syntax: end"
+    help = "remember everything is case sensitive!\navailable commands: damage | heal | add | remove\ndamage| syntax: damage name amount\nheal  | syntax: heal name amount\nadd   | syntax: add name\nremove| syntax: remove name\nend   | syntax: end"
     message = ''
+    macfolder = os.path.join(os.path.expanduser('~'), "Library", "Application Support", "dndtracker")
+    winfolder = os.path.join(os.path.expanduser('~'), "AppData", "Local", "dndtracker")
+    if sys.platform == 'darwin':
+        if os.path.exists(macfolder):
+            pass
+        else:
+            os.mkdir(macfolder)
+        path = macfolder
+    if sys.platform == 'win32':
+        if os.path.exists(winfolder):
+            pass
+        else:
+            os.mkdir(winfolder) 
+        path = winfolder 
     while True:
+        for x in combatants:
+            x.order = combatants.index(x)
+        if sys.platform == 'darwin':
+            files = os.listdir(macfolder)
+        if sys.platform == 'win32':
+            files = os.listdir(winfolder)
+        files = os.listdir(macfolder)
+        filenames = []
+        for x in files:
+            if x[-4:] == ".csv":
+                filenames.append(x[:-4])
         table = [['Name', 'Max HP', 'Current HP', 'AC']]
         for x in combatants:
-            table.append(x.attr())
+            table.append(x.attr()[:-1])
+        #os.system('cls' if os.name == 'nt' else 'clear')
         print(tabulate(table, headers="firstrow", tablefmt="heavy_grid"))
-        #todo: clear terminal
-        #todo: display info
         person = 0
         if message:
             print(message)
@@ -129,6 +156,7 @@ if __name__ == '__main__':
                         message = "Invalid command"
                 if person == 1:
                     message = "This combatant already exists"
+                    continue
                 try:
                     fighter = Entity(command[1], int(input('Max health: ')), int(input('Current health: ')), int(input('Armor Class: ')))
                 except ValueError:
@@ -157,5 +185,38 @@ if __name__ == '__main__':
                         message = "Invalid command"
                 if person == 0:
                     message = 'combatant not found or command incomplete'
+            case 'save':
+                name = f"{input('Save as: ')}.csv"
+                if name in files:
+                    no = False
+                    while True:
+                        yn = input(f"This will overwrite the existing encounter \"{name[:-4]}\". continue? (y/n): ")
+                        if yn == 'y':
+                            break
+                        elif yn == 'n':
+                            no = True
+                            break
+                        else:
+                            continue
+                    if no:
+                        continue
+                with open(f"{os.path.join(path, name)}", "w") as file:
+                    writer = csv.writer(file)
+                    for x in combatants:
+                        writer.writerow(x.attr())
+            case 'load':
+                print("Current encounters: ")
+                print(", ".join(filenames))
+                name = input("Encounter to load: ")
+                if name not in filenames:
+                    message = "File not found"
+                    continue
+                else:
+                    with open(f"{os.path.join(path, name)}.csv", "r") as file1:
+                        reader = csv.reader(file1)
+                        combatants = []
+                        for row in reader:
+                            fighter = Entity(row[0], int(row[1]), int(row[2]), int(row[3]))
+                            combatants.insert(int(row[4]), fighter)
             case other:
                 message = "Command not found, use \"help\" to see commands"
