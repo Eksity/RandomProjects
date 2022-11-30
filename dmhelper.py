@@ -268,13 +268,13 @@ if __name__ == '__main__':
             #save the current encounter to a csv file
             case 'save':
                 try:
-                    senc = command[1]
+                    senc = f"{command[1]}.csv"
                 except IndexError:
                     senc = f"{input('Save as: ')}.csv"
                 if senc in files:
                     no = False
                     while True:
-                        yn = input(f"This will overwrite the existing encounter \"{senc[:-4]}\". continue? (y/n): ")
+                        yn = input(f"This will overwrite the existing encounter \"{senc[:-4]}\". continue? (y/n): ").lower()
                         if yn == 'y':
                             break
                         elif yn == 'n':
