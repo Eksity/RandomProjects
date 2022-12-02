@@ -3,7 +3,10 @@ import sys
 import os
 import csv
 #pip install tabulate
-from tabulate import tabulate 
+try:
+    from tabulate import tabulate 
+except ModuleNotFoundError:
+    sys.exit('"tabulate" module not found, please run "pip install tabulate" or your equivalent')
 
 #create class for combatants
 class Entity:
@@ -16,7 +19,7 @@ class Entity:
         self.kill = False
 
     def attr(self):
-        return [self.name, self.maxhealth, self.nowhealth, self.armor, self.order]
+        return [self.name, f"{self.nowhealth}/{self.maxhealth}", self.armor, self.order]
 
     #method to subtract health
     def damage(self, num):
@@ -118,7 +121,7 @@ if __name__ == '__main__':
                 filenames.append(x[:-4])
 
         #create output table
-        table = [['Name', 'Max HP', 'Current HP', 'AC']]
+        table = [['Name', 'Health', 'AC']]
         for x in combatants:
             table.append(x.attr()[:-1])
 
@@ -126,7 +129,7 @@ if __name__ == '__main__':
         os.system('cls' if sys.platform == 'win32' else 'clear')
 
         #print output
-        print(tabulate(table, headers="firstrow", tablefmt="heavy_grid"))
+        print(tabulate(table, headers="firstrow", tablefmt="rounded_grid"))
 
         #print error message
         if message:
@@ -306,8 +309,8 @@ if __name__ == '__main__':
                         combatants = []
                         for row in reader:
                             if row:
-                                combatant = Entity(row[0], int(row[1]), int(row[2]), int(row[3]))
-                                combatants.insert(int(row[4]), combatant)
+                                combatant = Entity(row[0], int(row[1].split("/")[0]), int(row[1].split("/")[1]), int(row[2]))
+                                combatants.insert(int(row[3]), combatant)
             
             #if none of the above are used, give an error.
             case other:
