@@ -309,7 +309,7 @@ if __name__ == '__main__':
                         combatants = []
                         for row in reader:
                             if row:
-                                combatant = Entity(row[0], int(row[1].split("/")[0]), int(row[1].split("/")[1]), int(row[2]))
+                                combatant = Entity(row[0], int(row[1].split("/")[1]), int(row[1].split("/")[0]), int(row[2]))
                                 combatants.insert(int(row[3]), combatant)
             
             #if none of the above are used, give an error.
