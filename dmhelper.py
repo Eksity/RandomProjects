@@ -76,9 +76,9 @@ if __name__ == '__main__':
     # declare constants
     combatants = []
     message = ''
-    macfolder = os.path.join(os.path.expanduser('~'), "Library", "Application Support", "dmhelper")
-    winfolder = os.path.join(os.path.expanduser('~'), "AppData", "Local", "dmhelper")
-    lnxfolder = os.path.join(os.path.expanduser('~'), ".local", "dmhelper")
+    macfolder = os.path.join(os.path.expanduser('~'), "Library", "Application Support", "Eksity", "Dmhelper")
+    winfolder = os.path.join(os.path.expanduser('~'), "AppData", "Local", "Eksity", "Dmhelper")
+    lnxfolder = os.path.join(os.path.expanduser('~'), ".local", "Eksity", "Dmhelper")
 
     #create save folders and set save paths based on OS (ADD LINUX)
     if sys.platform.startswith('darwin'):
