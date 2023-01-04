@@ -33,11 +33,11 @@ elif ready == "y":
             else:
                 print("Something's not right.")
                 guess = input("Guess again: ")
-            tries = tries+1
+        tries = tries+1
 else:
     print("That's not an answer!")
 
 # outro
 print("Correct! the number was " + win_number)
-print("you took %d tries!" % tries)
+print(f"you took {tries} tries!")
 print("Thanks for playing!")
