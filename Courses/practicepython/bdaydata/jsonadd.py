@@ -1,6 +1,7 @@
 import json
 import requests
 import sys
+import os
 from bs4 import BeautifulSoup
 name = input("Name: ")
 name = name.split(" ")
@@ -15,8 +16,8 @@ bday = soup.find(class_="bday")
 bday = f"{bday}"[19:29]
 if not bday:
     sys.exit("Person not found")
-with open('info.json', 'r') as file:
+with open(os.path.join(os.path.expanduser('~'), "Desktop", "Code", "Python","Courses", "practicepython", "bdaydata", "info.json"), 'r') as file:
     bdays = json.load(file)
 bdays[' '.join(name)] = bday
-with open('info.json', 'w') as file1:
+with open(os.path.join(os.path.expanduser('~'), "Desktop", "Code", "Python","Courses", "practicepython", "bdaydata", "info.json"), 'w') as file1:
     json.dump(bdays, file1)
